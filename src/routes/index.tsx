@@ -1,29 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "Qizlar bazmi — Taklifnoma" },
+      { name: "description", content: "Qizlar bazmi taklifnomasi — 24 iyun 2026, soat 19:00." },
+      { property: "og:title", content: "Qizlar bazmi — Taklifnoma" },
+      { property: "og:description", content: "Qizlar bazmi taklifnomasi — 24 iyun 2026, soat 19:00." },
     ],
   }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  useEffect(() => {
+    window.location.replace("/invitation.html");
+  }, []);
+
   return (
     <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+      style={{
+        display: "flex",
+        minHeight: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FEFCF8",
+        fontFamily: "Montserrat, sans-serif",
+        color: "#a8884f",
+      }}
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+      <a href="/invitation.html" style={{ color: "#a8884f", textDecoration: "underline" }}>
+        Taklifnomani ochish
+      </a>
     </div>
   );
 }
