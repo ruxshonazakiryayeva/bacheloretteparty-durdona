@@ -34,6 +34,10 @@ body{background:var(--ivory);font-family:'Cormorant Garamond',serif;color:var(--
 .audio-fab.playing{animation:pfab 2s ease-in-out infinite}
 @keyframes pfab{0%,100%{box-shadow:0 4px 20px rgba(201,169,110,.5)}50%{box-shadow:0 4px 32px rgba(201,169,110,.9),0 0 0 10px rgba(201,169,110,.12)}}
 
+/* ── AUDIO HINT ── */
+.audio-hint{position:fixed;bottom:88px;right:20px;z-index:300;background:var(--dark);color:#fff;font-family:'Montserrat',sans-serif;font-size:11px;padding:8px 14px;border-radius:8px;opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.audio-hint::after{content:'';position:absolute;bottom:-6px;right:22px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--dark)}
+
 /* ── CANVAS ── */
 #rose-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.14}
 
@@ -155,6 +159,10 @@ body{background:var(--ivory);font-family:'Cormorant Garamond',serif;color:var(--
 <button class="audio-fab" id="audioFab" onclick="toggleAudio()">
   <i class="fa-solid fa-music" id="audioIcon"></i>
 </button>
+<div class="audio-hint" id="audioHint">
+  <span data-inline-lang="uz">Musiqani yoqing</span>
+  <span data-inline-lang="ru" style="display:none">Включите музыку</span>
+</div>
 
 <div class="page">
 
@@ -325,7 +333,7 @@ body{background:var(--ivory);font-family:'Cormorant Garamond',serif;color:var(--
           <span data-inline-lang="uz">Guliston shahar, 3-mavze</span>
           <span data-inline-lang="ru" style="display:none">г. Гулистон, 3-й микрорайон</span>
         </div>
-        <a class="loc-btn" href="https://maps.app.goo.gl/8BF4jedmBra9m6Nz9" target="_blank" rel="noopener">
+        <a class="loc-btn" href="https://maps.app.goo.gl/NizyRvwqZpYYoKRP7" target="_blank" rel="noopener">
           <i class="fa-solid fa-location-dot"></i>
           <span data-inline-lang="uz">Google Xaritasida ko'rish</span>
           <span data-inline-lang="ru" style="display:none">Открыть в Google Картах</span>
@@ -449,15 +457,35 @@ document.querySelectorAll('.section').forEach(s=>obs.observe(s));
 
 // ── AUDIO ──
 let playing=false;
+let ytPlayer=null;
 const icon=document.getElementById('audioIcon');
 const fab=document.getElementById('audioFab');
+const hint=document.getElementById('audioHint');
+
+function initAudio(){
+  if(ytPlayer) return;
+  ytPlayer=document.createElement('iframe');
+  ytPlayer.id='ytPlayer';
+  ytPlayer.style.cssText='position:fixed;bottom:-9999px;right:-9999px;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
+  ytPlayer.allow='autoplay; encrypted-media';
+  ytPlayer.src='https://www.youtube.com/embed/_MWEapW4PaE?autoplay=1&mute=0&loop=1&playlist=_MWEapW4PaE';
+  document.body.appendChild(ytPlayer);
+}
+
 function toggleAudio(){
   if(!playing){
-    window.open('https://youtu.be/_MWEapW4PaE?si=Qs9vHdkpo3COMJ1C','_blank');
+    initAudio();
     icon.className='fa-solid fa-pause';
     fab.classList.add('playing');
+    hint.style.opacity='1';
+    hint.style.transform='translateY(0)';
+    setTimeout(()=>{
+      hint.style.opacity='0';
+      hint.style.transform='translateY(6px)';
+    },3500);
     playing=true;
   } else {
+    if(ytPlayer){ytPlayer.remove();ytPlayer=null;}
     icon.className='fa-solid fa-music';
     fab.classList.remove('playing');
     playing=false;
