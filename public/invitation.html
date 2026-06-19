@@ -156,7 +156,7 @@ body{background:var(--ivory);font-family:'Cormorant Garamond',serif;color:var(--
   <button class="lb" data-lang="ru" onclick="setLang('ru')">RU</button>
 </div>
 
-<button class="audio-fab" id="audioFab" onclick="toggleAudio()">
+<button type="button" class="audio-fab" id="audioFab" onclick="toggleAudio(event)">
   <i class="fa-solid fa-music" id="audioIcon"></i>
 </button>
 <div class="audio-hint" id="audioHint">
@@ -468,11 +468,13 @@ function initAudio(){
   ytPlayer.id='ytPlayer';
   ytPlayer.style.cssText='position:fixed;bottom:-9999px;right:-9999px;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
   ytPlayer.allow='autoplay; encrypted-media';
-  ytPlayer.src='https://www.youtube.com/embed/_MWEapW4PaE?autoplay=1&mute=0&loop=1&playlist=_MWEapW4PaE';
+  ytPlayer.sandbox='allow-scripts allow-same-origin allow-presentation';
+  ytPlayer.src='https://www.youtube.com/embed/_MWEapW4PaE?autoplay=1&mute=0&loop=1&playlist=_MWEapW4PaE&playsinline=1';
   document.body.appendChild(ytPlayer);
 }
 
-function toggleAudio(){
+function toggleAudio(e){
+  if(e){e.preventDefault();e.stopPropagation();}
   if(!playing){
     initAudio();
     icon.className='fa-solid fa-pause';
