@@ -156,7 +156,7 @@ body{background:var(--ivory);font-family:'Cormorant Garamond',serif;color:var(--
   <button class="lb" data-lang="ru" onclick="setLang('ru')">RU</button>
 </div>
 
-<button class="audio-fab" id="audioFab" onclick="toggleAudio()">
+<button type="button" class="audio-fab" id="audioFab" onclick="toggleAudio(event)">
   <i class="fa-solid fa-music" id="audioIcon"></i>
 </button>
 <div class="audio-hint" id="audioHint">
