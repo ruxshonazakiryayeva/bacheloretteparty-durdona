@@ -457,15 +457,35 @@ document.querySelectorAll('.section').forEach(s=>obs.observe(s));
 
 // ── AUDIO ──
 let playing=false;
+let ytPlayer=null;
 const icon=document.getElementById('audioIcon');
 const fab=document.getElementById('audioFab');
+const hint=document.getElementById('audioHint');
+
+function initAudio(){
+  if(ytPlayer) return;
+  ytPlayer=document.createElement('iframe');
+  ytPlayer.id='ytPlayer';
+  ytPlayer.style.cssText='position:fixed;bottom:-9999px;right:-9999px;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
+  ytPlayer.allow='autoplay; encrypted-media';
+  ytPlayer.src='https://www.youtube.com/embed/_MWEapW4PaE?autoplay=1&mute=0&loop=1&playlist=_MWEapW4PaE';
+  document.body.appendChild(ytPlayer);
+}
+
 function toggleAudio(){
   if(!playing){
-    window.open('https://youtu.be/_MWEapW4PaE?si=Qs9vHdkpo3COMJ1C','_blank');
+    initAudio();
     icon.className='fa-solid fa-pause';
     fab.classList.add('playing');
+    hint.style.opacity='1';
+    hint.style.transform='translateY(0)';
+    setTimeout(()=>{
+      hint.style.opacity='0';
+      hint.style.transform='translateY(6px)';
+    },3500);
     playing=true;
   } else {
+    if(ytPlayer){ytPlayer.remove();ytPlayer=null;}
     icon.className='fa-solid fa-music';
     fab.classList.remove('playing');
     playing=false;
