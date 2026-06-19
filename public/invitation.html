@@ -472,7 +472,8 @@ function initAudio(){
   document.body.appendChild(ytPlayer);
 }
 
-function toggleAudio(){
+function toggleAudio(e){
+  if(e){e.preventDefault();e.stopPropagation();}
   if(!playing){
     initAudio();
     icon.className='fa-solid fa-pause';
