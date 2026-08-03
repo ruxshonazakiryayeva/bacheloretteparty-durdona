@@ -142,3 +142,140 @@
     color: var(--color-foreground);
   }
 }
+
+/* ============ Qizlar bazmi — taklifnoma dizayn tizimi ============ */
+
+@theme {
+  --color-ivory: oklch(0.987 0.008 78);
+  --color-cream: oklch(0.955 0.02 72);
+  --color-blush: oklch(0.91 0.035 12);
+  --color-blush-deep: oklch(0.845 0.06 10);
+  --color-rosegold: oklch(0.645 0.09 20);
+  --color-champagne: oklch(0.86 0.055 82);
+  --color-ink: oklch(0.36 0.032 12);
+  --color-inksoft: oklch(0.545 0.028 12);
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-script: "Playfair Display", Georgia, serif;
+  --font-body: "Jost", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+  }
+}
+
+/* --- ikat / suzani texture ------------------------------------- */
+@utility ikat-bg {
+  background-image:
+    radial-gradient(circle at 20% 30%, color-mix(in oklab, var(--color-blush) 55%, transparent) 0 6px, transparent 7px),
+    radial-gradient(circle at 70% 70%, color-mix(in oklab, var(--color-champagne) 50%, transparent) 0 5px, transparent 6px),
+    repeating-linear-gradient(45deg, color-mix(in oklab, var(--color-rosegold) 8%, transparent) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-45deg, color-mix(in oklab, var(--color-rosegold) 6%, transparent) 0 2px, transparent 2px 16px);
+  background-size: 90px 90px, 90px 90px, 64px 64px, 64px 64px;
+}
+
+@utility text-shimmer {
+  background: linear-gradient(100deg,
+    var(--color-rosegold) 0%,
+    var(--color-champagne) 30%,
+    oklch(0.98 0.02 80) 45%,
+    var(--color-champagne) 60%,
+    var(--color-rosegold) 100%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -50% 0; }
+}
+
+/* --- scroll reveal: curtain wipe -------------------------------- */
+.rv {
+  opacity: 0;
+  clip-path: inset(0 0 100% 0);
+  transform: translateY(28px);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    clip-path 1100ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.rv-x {
+  clip-path: inset(0 100% 0 0);
+  transform: translateY(0);
+}
+.rv.in {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+  transform: translateY(0);
+}
+
+/* --- letter reveal ---------------------------------------------- */
+.ltr {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em) rotate(6deg);
+  filter: blur(6px);
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22,1,0.36,1), filter 700ms ease;
+}
+.in .ltr { opacity: 1; transform: none; filter: blur(0); }
+
+/* --- self-drawing divider --------------------------------------- */
+.draw path, .draw circle, .draw line {
+  stroke-dasharray: var(--len, 400);
+  stroke-dashoffset: var(--len, 400);
+  transition: stroke-dashoffset 2200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.draw.in path, .draw.in circle, .draw.in line { stroke-dashoffset: 0; }
+
+/* --- particles --------------------------------------------------- */
+@keyframes petal-fall {
+  0%   { transform: translate3d(0, -12vh, 0) rotate(0deg) scale(1); opacity: 0; }
+  10%  { opacity: 0.85; }
+  50%  { transform: translate3d(4vw, 45vh, 0) rotate(180deg) scale(1.05); }
+  90%  { opacity: 0.7; }
+  100% { transform: translate3d(-3vw, 108vh, 0) rotate(400deg) scale(0.9); opacity: 0; }
+}
+@keyframes sparkle-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(0.4); opacity: 0; }
+  25%  { opacity: 1; }
+  100% { transform: translate3d(2vw, -70vh, 0) scale(1.1); opacity: 0; }
+}
+@keyframes soft-float {
+  0%, 100% { transform: translateY(0) }
+  50% { transform: translateY(-10px) }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.85); opacity: 0.75; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes tick-in {
+  from { opacity: 0; transform: rotateX(-80deg); }
+  to   { opacity: 1; transform: rotateX(0); }
+}
+
+.float-slow { animation: soft-float 7s ease-in-out infinite; }
+
+/* --- countdown flip ---------------------------------------------- */
+.tick { animation: tick-in 520ms cubic-bezier(0.22,1,0.36,1); transform-origin: top center; }
+
+/* --- magnetic / tilt cards --------------------------------------- */
+.tiltable {
+  transition: transform 450ms cubic-bezier(0.22,1,0.36,1), box-shadow 450ms ease;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv, .ltr, .draw path { transition: none !important; }
+  .rv { opacity: 1; clip-path: none; transform: none; }
+  .ltr { opacity: 1; transform: none; filter: none; }
+  .float-slow, .text-shimmer { animation: none; }
+}
