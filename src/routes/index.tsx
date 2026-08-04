@@ -475,14 +475,6 @@ function Gallery() {
               </TiltCard>
             </Reveal>
           ))}
-          <Reveal delay={360} className="">
-            <div className="flex h-full flex-col items-center justify-center gap-2 rounded-sm border border-dashed border-rosegold/35 bg-cream/50 text-center">
-              <Paisley className="text-rosegold/70 float-slow" size={26} />
-              <p className="px-3 text-[10px] uppercase tracking-[0.25em] text-inksoft">
-                {t.galleryComingSoon}
-              </p>
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>
