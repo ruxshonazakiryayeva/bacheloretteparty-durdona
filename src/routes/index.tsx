@@ -5,7 +5,6 @@ import heroFlorals from "@/assets/hero-florals.jpg";
 import gallery1 from "@/assets/gallery-1.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
-import songUrl from "@/assets/song.mp3";
 
 import { Countdown } from "@/components/inv/countdown";
 import { Particles, SparkleBurst } from "@/components/inv/particles";
@@ -25,6 +24,7 @@ import { Lock, Music, VolumeX } from "lucide-react";
 const INVITATION_KEY = "qizlar_bazmi_durdona";
 const ADMIN_PASSWORD = "1317";
 const MAIN_SITE_URL = "https://webinvite-six.vercel.app/";
+const MUSIC_VIDEO_ID = "nxsjGMoqyfM";
 
 const OG_IMAGE =
   "https://storage.googleapis.com/gpt-engineer-file-uploads/CgkjvrXqwyWhgLmMwwOhV0pCido2/social-images/social-1784697237501-webinvitesaytyuzi.webp";
@@ -574,17 +574,6 @@ function Invitation() {
   const t = translations[lang];
 
   const [playing, setPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const togglePlay = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (playing) {
-      a.pause();
-    } else {
-      a.play().catch(() => {});
-    }
-    setPlaying(!playing);
-  };
 
   // Admin gate
   const [adminOverlay, setAdminOverlay] = useState(false);
@@ -636,19 +625,26 @@ function Invitation() {
         <IntroDoors open={open} onOpen={() => setOpen(true)} />
         {open && <Particles />}
 
-        <audio ref={audioRef} src={songUrl} loop preload="auto" />
-
         {open && <LangSwitcher lang={lang} setLang={setLang} />}
 
         {open && (
           <button
             type="button"
-            onClick={togglePlay}
+            onClick={() => setPlaying((p) => !p)}
             className="fixed left-4 top-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-rosegold/30 bg-ivory/80 text-rosegold backdrop-blur-sm transition hover:bg-blush/40 sm:left-6 sm:top-6"
             aria-label={playing ? "Musiqani to'xtatish" : "Musiqani yoqish"}
           >
             {playing ? <Music className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
           </button>
+        )}
+
+        {playing && (
+          <iframe
+            title="qizlar-bazmi-music"
+            className="fixed h-0 w-0 opacity-0 pointer-events-none"
+            src={`https://www.youtube.com/embed/${MUSIC_VIDEO_ID}?autoplay=1&loop=1&playlist=${MUSIC_VIDEO_ID}&controls=0&modestbranding=1`}
+            allow="autoplay; encrypted-media"
+          />
         )}
 
         <div
