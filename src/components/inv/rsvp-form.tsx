@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Paisley } from "./ornaments";
+import { useLang } from "@/lib/i18n";
+
+const INVITATION_KEY = "qizlar_bazmi_durdona";
 
 type Attendance = "ha" | "yoq";
 
 export function RsvpForm() {
+  const { t } = useLang();
   const [name, setName] = useState("");
   const [attendance, setAttendance] = useState<Attendance>("ha");
   const [guests, setGuests] = useState(1);
@@ -17,27 +21,24 @@ export function RsvpForm() {
     const trimmed = name.trim();
     if (trimmed.length < 2) {
       setStatus("error");
-      setMessage("Iltimos, ismingizni kiriting.");
+      setMessage(t.fErrName);
       return;
     }
     setStatus("sending");
-    const { error } = await supabase.from("rsvps").insert({
+    const { error } = await supabase.from("invitation_rsvp").insert({
+      invitation: INVITATION_KEY,
       name: trimmed.slice(0, 100),
-      attendance,
+      attendance: attendance === "ha" ? "yes" : "no",
       guests: attendance === "ha" ? Math.min(Math.max(guests, 1), 20) : 1,
       comment: comment.trim() ? comment.trim().slice(0, 500) : null,
     });
     if (error) {
       setStatus("error");
-      setMessage("Yuborishda xatolik yuz berdi. Yana bir bor urinib ko'ring.");
+      setMessage(t.fErrSend);
       return;
     }
     setStatus("done");
-    setMessage(
-      attendance === "ha"
-        ? "Rahmat! Sizni kutib qolamiz 🤍"
-        : "Javobingiz uchun rahmat. Sizni sog'inamiz 🤍",
-    );
+    setMessage(attendance === "ha" ? t.fDoneYes : t.fDoneNo);
   }
 
   const field =
@@ -56,24 +57,24 @@ export function RsvpForm() {
     <form onSubmit={onSubmit} className="space-y-5 px-5 py-8 sm:px-9">
       <div>
         <label htmlFor="rsvp-name" className="mb-2 block text-[11px] uppercase tracking-[0.24em] text-inksoft">
-          Ism
+          {t.fName}
         </label>
         <input
           id="rsvp-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={100}
-          placeholder="Ismingiz"
+          placeholder={t.fNamePh}
           className={field}
         />
       </div>
 
       <div>
-        <span className="mb-2 block text-[11px] uppercase tracking-[0.24em] text-inksoft">Kelasizmi?</span>
+        <span className="mb-2 block text-[11px] uppercase tracking-[0.24em] text-inksoft">{t.fAttend}</span>
         <div className="grid grid-cols-2 gap-2.5">
           {([
-            ["ha", "Ha, albatta"],
-            ["yoq", "Afsuski, yo'q"],
+            ["ha", t.fYes],
+            ["yoq", t.fNo],
           ] as const).map(([value, label]) => (
             <button
               key={value}
@@ -94,12 +95,12 @@ export function RsvpForm() {
       {attendance === "ha" && (
         <div>
           <label htmlFor="rsvp-guests" className="mb-2 block text-[11px] uppercase tracking-[0.24em] text-inksoft">
-            Mehmonlar soni
+            {t.fGuests}
           </label>
           <div className="flex items-center gap-3">
             <button
               type="button"
-              aria-label="Kamaytirish"
+              aria-label="-"
               onClick={() => setGuests((g) => Math.max(1, g - 1))}
               className="h-11 w-11 rounded-full border border-rosegold/30 font-display text-xl text-rosegold transition hover:bg-blush/40"
             >
@@ -116,7 +117,7 @@ export function RsvpForm() {
             />
             <button
               type="button"
-              aria-label="Ko'paytirish"
+              aria-label="+"
               onClick={() => setGuests((g) => Math.min(20, g + 1))}
               className="h-11 w-11 rounded-full border border-rosegold/30 font-display text-xl text-rosegold transition hover:bg-blush/40"
             >
@@ -128,7 +129,7 @@ export function RsvpForm() {
 
       <div>
         <label htmlFor="rsvp-comment" className="mb-2 block text-[11px] uppercase tracking-[0.24em] text-inksoft">
-          Izoh <span className="normal-case tracking-normal">(ixtiyoriy)</span>
+          {t.fComment} <span className="normal-case tracking-normal">{t.fCommentOptional}</span>
         </label>
         <textarea
           id="rsvp-comment"
@@ -136,7 +137,7 @@ export function RsvpForm() {
           onChange={(e) => setComment(e.target.value)}
           maxLength={500}
           rows={3}
-          placeholder="Iliq tilaklaringiz..."
+          placeholder={t.fCommentPh}
           className={`${field} resize-none`}
         />
       </div>
@@ -148,7 +149,7 @@ export function RsvpForm() {
         disabled={status === "sending"}
         className="tiltable w-full rounded-sm border border-rosegold/50 bg-gradient-to-r from-blush/70 via-cream to-blush/70 py-4 font-display text-lg tracking-[0.18em] text-rosegold uppercase shadow-[0_14px_40px_-20px_oklch(0.5_0.08_15/0.8)] transition hover:-translate-y-0.5 hover:shadow-[0_20px_50px_-20px_oklch(0.5_0.08_15/0.9)] disabled:opacity-60"
       >
-        {status === "sending" ? "Yuborilmoqda..." : "Yuborish"}
+        {status === "sending" ? t.fSending : t.fSubmit}
       </button>
     </form>
   );
